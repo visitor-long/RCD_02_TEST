@@ -49,13 +49,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) //10mm
 			trip_flag = 1;
 		}
 
-		if(trip_time > 200)
-		{
-			Frequency=0;
-			Duty=0;
-		}
+//		if(trip_time > 200)
+//		{
+//			Frequency=0;
+//			Duty=0;
+//		}
 
-		else if(trip_time > 0)
+		if(trip_time > 0)
 		{
 			SelectLedLight(TripLed,Red,0);
 //			SelectLedLight(TripLed,Green,0);
@@ -63,7 +63,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) //10mm
 			delay_tim--;
 			if(delay_tim == 0)
 			{
-				HAL_GPIO_TogglePin(GPIOB, TRIP_GREEN_Pin);
+				SelectLedLight(TripLed,Green,1);
 				delay_tim = 5;
 			}
 
