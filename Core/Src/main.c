@@ -143,7 +143,7 @@ int main(void)
 		end_flag=0;
 	 }
 
-	if(((int)Frequency >= 940 && (int)Frequency <= 1060) && ((int)Duty > 49 && (int)Duty < 51))//Heart beat信�?�
+	if(((int)Frequency >= 940 && (int)Frequency <= 1060) && ((int)Duty >= 49 && (int)Duty <= 51))//Heart beat信�?�
 	{
 		SelectLedLight(HeartLed,Red,0);
 		SelectLedLight(HeartLed,Green,0);

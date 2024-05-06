@@ -1946,7 +1946,7 @@ int main(void)
  80014a8:	701a      	strb	r2, [r3, #0]
 	 }
 
-	if(((int)Frequency >= 940 && (int)Frequency <= 1060) && ((int)Duty > 49 && (int)Duty < 51))//Heart beat信�?�
+	if(((int)Frequency >= 940 && (int)Frequency <= 1060) && ((int)Duty >= 49 && (int)Duty <= 51))//Heart beat信�?�
  80014aa:	4b7d      	ldr	r3, [pc, #500]	; (80016a0 <main+0x2e8>)
  80014ac:	681b      	ldr	r3, [r3, #0]
  80014ae:	4618      	mov	r0, r3
@@ -1967,14 +1967,14 @@ int main(void)
  80014d4:	4618      	mov	r0, r3
  80014d6:	f7ff fe11 	bl	80010fc <__aeabi_f2iz>
  80014da:	4603      	mov	r3, r0
- 80014dc:	2b31      	cmp	r3, #49	; 0x31
+ 80014dc:	2b30      	cmp	r3, #48	; 0x30
  80014de:	dd1f      	ble.n	8001520 <main+0x168>
  80014e0:	4b70      	ldr	r3, [pc, #448]	; (80016a4 <main+0x2ec>)
  80014e2:	681b      	ldr	r3, [r3, #0]
  80014e4:	4618      	mov	r0, r3
  80014e6:	f7ff fe09 	bl	80010fc <__aeabi_f2iz>
  80014ea:	4603      	mov	r3, r0
- 80014ec:	2b32      	cmp	r3, #50	; 0x32
+ 80014ec:	2b33      	cmp	r3, #51	; 0x33
  80014ee:	dc17      	bgt.n	8001520 <main+0x168>
 	{
 		SelectLedLight(HeartLed,Red,0);
