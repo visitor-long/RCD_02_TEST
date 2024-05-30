@@ -857,7 +857,7 @@ typedef struct
 #define EXTI                ((EXTI_TypeDef *)EXTI_BASE)
 #define GPIOA               ((GPIO_TypeDef *)GPIOA_BASE)
 #define GPIOB               ((GPIO_TypeDef *)GPIOB_BASE)
-#define GPIOC               ((GPIO_TypeDef *)GPIOC_BASE)
+#define B               ((GPIO_TypeDef *)GPIOC_BASE)
 #define GPIOD               ((GPIO_TypeDef *)GPIOD_BASE)
 #define GPIOE               ((GPIO_TypeDef *)GPIOE_BASE)
 #define GPIOF               ((GPIO_TypeDef *)GPIOF_BASE)

@@ -10,7 +10,6 @@
 
 #include "main.h"
 #include "stm32f1xx_hal.h"
-#include "tim.h"
 #include "stm32f1xx_hal_tim.h"
 
 extern float Frequency;
