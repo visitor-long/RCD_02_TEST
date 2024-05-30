@@ -54,16 +54,22 @@ extern unsigned char work_normol;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+void test_in();
+
 
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define Calibration_RED_Pin GPIO_PIN_1
-#define Calibration_RED_GPIO_Port GPIOA
-#define Calibration_GREEN_Pin GPIO_PIN_2
-#define Calibration_GREEN_GPIO_Port GPIOA
-#define Calibration_BLUE_Pin GPIO_PIN_3
-#define Calibration_BLUE_GPIO_Port GPIOA
+#define SCL_Pin GPIO_PIN_2
+#define SCL_GPIO_Port GPIOC
+#define SDA_Pin GPIO_PIN_3
+#define SDA_GPIO_Port GPIOC
+#define CALIBRATION_RED_Pin GPIO_PIN_1
+#define CALIBRATION_RED_GPIO_Port GPIOA
+#define CALIBRATION_GREEN_Pin GPIO_PIN_2
+#define CALIBRATION_GREEN_GPIO_Port GPIOA
+#define CALIBRATION_BLUE_Pin GPIO_PIN_3
+#define CALIBRATION_BLUE_GPIO_Port GPIOA
 #define TEST_IN_Pin GPIO_PIN_4
 #define TEST_IN_GPIO_Port GPIOA
 #define HEART_RED_Pin GPIO_PIN_6
@@ -78,18 +84,36 @@ void Error_Handler(void);
 #define TRIP_GREEN_GPIO_Port GPIOB
 #define TRIP_BLUE_Pin GPIO_PIN_11
 #define TRIP_BLUE_GPIO_Port GPIOB
-#define TEST_IN_RED_Pin GPIO_PIN_12
-#define TEST_IN_RED_GPIO_Port GPIOB
+#define TSET_IN_RED_Pin GPIO_PIN_12
+#define TSET_IN_RED_GPIO_Port GPIOB
 #define TEST_IN_GREEN_Pin GPIO_PIN_13
 #define TEST_IN_GREEN_GPIO_Port GPIOB
 #define TEST_IN_BLUE_Pin GPIO_PIN_14
 #define TEST_IN_BLUE_GPIO_Port GPIOB
-#define HEART_BEAT_Pin GPIO_PIN_8
-#define HEART_BEAT_GPIO_Port GPIOA
-#define TRIP_INPUT_Pin GPIO_PIN_11
-#define TRIP_INPUT_GPIO_Port GPIOA
-#define Calibration_START_Pin GPIO_PIN_3
-#define Calibration_START_GPIO_Port GPIOB
+#define TRIP_RED1_Pin GPIO_PIN_15
+#define TRIP_RED1_GPIO_Port GPIOB
+#define TRIP_GREEN1_Pin GPIO_PIN_6
+#define TRIP_GREEN1_GPIO_Port GPIOC
+#define TRIP_BLUE1_Pin GPIO_PIN_7
+#define TRIP_BLUE1_GPIO_Port GPIOC
+#define ERROR_RED_Pin GPIO_PIN_8
+#define ERROR_RED_GPIO_Port GPIOC
+#define ERROR_GREEN_Pin GPIO_PIN_9
+#define ERROR_GREEN_GPIO_Port GPIOC
+#define ERROR_BLUE_Pin GPIO_PIN_8
+#define ERROR_BLUE_GPIO_Port GPIOA
+#define PWM_INT_Pin GPIO_PIN_10
+#define PWM_INT_GPIO_Port GPIOC
+#define PWM_INT_EXTI_IRQn EXTI15_10_IRQn
+#define ERROR_INPUT_Pin GPIO_PIN_11
+#define ERROR_INPUT_GPIO_Port GPIOC
+#define TRIP_OUT2_Pin GPIO_PIN_12
+#define TRIP_OUT2_GPIO_Port GPIOC
+#define TRIP_OUT1_Pin GPIO_PIN_2
+#define TRIP_OUT1_GPIO_Port GPIOD
+#define TRIP_OUT1_EXTI_IRQn EXTI2_IRQn
+#define Calibrate_KEY_Pin GPIO_PIN_3
+#define Calibrate_KEY_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

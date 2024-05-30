@@ -11,10 +11,10 @@
 #include "main.h"
 #include "gpio.h"
 
-enum Signal{CalibrateLed=1, HeartLed=2, TripLed=3, TestLed=4};
+enum Signal{TEST_IN_LED=1, TripLed1_LED =2, TripLed2_LED=3, ERROR_LED =4, PWM_LED=5, CALIBRATE_LED=6};
 enum Color{Red=1, Green=2, Blue=3};
 
 
-void SelectLedLight(unsigned char signal,unsigned char color,unsigned char state);
+void OnOffLedLight(unsigned char signal,unsigned char color,unsigned char state);
 
 #endif /* INC_LED_H_ */

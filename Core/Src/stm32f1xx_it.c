@@ -22,10 +22,21 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "tim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
+unsigned int Counter = 0;
+unsigned char PWM_Flag = 0;
+
+uint32_t capture_start1;
+uint32_t capture_start2;
+uint32_t capture_time1;
+uint32_t capture_time2;
+uint32_t capture_end1;
+uint32_t capture_end2;
+uint8_t Flag = 0;
 
 /* USER CODE END TD */
 
@@ -55,8 +66,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim2;
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -200,31 +210,71 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles TIM1 capture compare interrupt.
+  * @brief This function handles EXTI line2 interrupt.
   */
-void TIM1_CC_IRQHandler(void)
+void EXTI2_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM1_CC_IRQn 0 */
+  /* USER CODE BEGIN EXTI2_IRQn 0 */
+	if (HAL_GPIO_ReadPin(TRIP_OUT1_GPIO_Port,TRIP_OUT1_Pin) == 1)
+	{
+//		HAL_TIM_Base_Stop(&htim2);
+//		 __HAL_TIM_SET_COUNTER(&htim2,0);
+		HAL_TIM_Base_Start(&htim2);
+		capture_start1 =  __HAL_TIM_GET_COUNTER(&htim2);
 
-  /* USER CODE END TIM1_CC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim1);
-  /* USER CODE BEGIN TIM1_CC_IRQn 1 */
+	}
 
-  /* USER CODE END TIM1_CC_IRQn 1 */
+	else
+	{
+		HAL_TIM_Base_Stop(&htim2);
+		capture_end1 = __HAL_TIM_GET_COUNTER(&htim2);
+		__HAL_TIM_SET_COUNTER(&htim2,0);
+	}
+  /* USER CODE END EXTI2_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(TRIP_OUT1_Pin);
+  /* USER CODE BEGIN EXTI2_IRQn 1 */
+
+  /* USER CODE END EXTI2_IRQn 1 */
 }
 
 /**
-  * @brief This function handles TIM2 global interrupt.
+  * @brief This function handles EXTI line[15:10] interrupts.
   */
-void TIM2_IRQHandler(void)
+void EXTI15_10_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM2_IRQn 0 */
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+	if (HAL_GPIO_ReadPin(PWM_INT_GPIO_Port,PWM_INT_Pin) == 1)
+	{
+		HAL_TIM_Base_Start(&htim1);
 
-  /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
-  /* USER CODE BEGIN TIM2_IRQn 1 */
+		if (HAL_GPIO_ReadPin(TRIP_OUT2_GPIO_Port,TRIP_OUT2_Pin) == 1)
+		{
+			capture_start2 =  __HAL_TIM_GET_COUNTER(&htim2);
+		}
 
-  /* USER CODE END TIM2_IRQn 1 */
+	}
+
+	else
+	{
+		HAL_TIM_Base_Stop(&htim1);
+		Counter = __HAL_TIM_GET_COUNTER(&htim1);
+		__HAL_TIM_SET_COUNTER(&htim1,0);
+		PWM_Flag = 1;
+	}
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(PWM_INT_Pin);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+//if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+//{
+//	if (HAL_GPIO_ReadPin(TRIP_OUT2_GPIO_Port,TRIP_OUT2_Pin) == 1)
+//	{
+//		capture_start2 =  __HAL_TIM_GET_COUNTER(&htim2);
+//		TIM_ClearITPendingBit(TIM3, TIM_FLAG_Update);
+//	}
+//
+//}
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

@@ -7,73 +7,108 @@
 #include "led.h"
 
 
-
-void SelectLedLight(unsigned char signal,unsigned char color,unsigned char state)
+void OnOffLedLight(unsigned char signal,unsigned char color,unsigned char state)
 {
-	if(state)
-		state = 0;
-	else
-		state = 1;
-	switch(signal)
-	{
-	case CalibrateLed:
-		switch(color)
-		{
-		case Red:
-			HAL_GPIO_WritePin(GPIOA, Calibration_RED_Pin, state);
-			break;
-		case Green:
-			HAL_GPIO_WritePin(GPIOA, Calibration_GREEN_Pin, state);
-			break;
-		case Blue:
-			HAL_GPIO_WritePin(GPIOA, Calibration_BLUE_Pin, state);
-			break;
-		}
-		break;
-	case HeartLed:
-		switch(color)
-		{
-		case Red:
-			HAL_GPIO_WritePin(GPIOA, HEART_RED_Pin, state);
-			break;
-		case Green:
-			HAL_GPIO_WritePin(GPIOA, HEART_GREEN_Pin, state);
-			break;
-		case Blue:
-			HAL_GPIO_WritePin(GPIOC, HEART_BLUE_Pin, state);
-			break;
-		}
-		break;
-	case TripLed:
-		switch(color)
-		{
-		case Red:
-			HAL_GPIO_WritePin(GPIOB, TRIP_RED_Pin, state);
-			break;
-		case Green:
-			HAL_GPIO_WritePin(GPIOB, TRIP_GREEN_Pin, state);
-			break;
-		case Blue:
-			HAL_GPIO_WritePin(GPIOB, TRIP_BLUE_Pin, state);
-			break;
-		}
-		break;
-	case TestLed:
-			switch(color)
+	switch(signal){
+	    case ERROR_LED :
+	    	if(color == Green)
+	    	{
+	    		if(state)
+	    		 HAL_GPIO_WritePin(GPIOC, ERROR_GREEN_Pin, GPIO_PIN_RESET);
+	    		else
+				 HAL_GPIO_WritePin(GPIOC, ERROR_GREEN_Pin, GPIO_PIN_SET);
+	    	}
+	    	else if(color == Red)
+	    	{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOC, ERROR_RED_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOC, ERROR_RED_Pin, GPIO_PIN_SET);
+	    	}
+	       break; /* 可选的 */
+	    case TEST_IN_LED :
+	    	if(color == Green)
+	    	{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOB, TEST_IN_GREEN_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOB, TEST_IN_GREEN_Pin, GPIO_PIN_SET);
+	    	}
+	    	else if(color == Red)
+	    	{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOB, TSET_IN_RED_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOB, TSET_IN_RED_Pin, GPIO_PIN_SET);
+	    	}
+	       break; /* 可选的 */
+	    case TripLed2_LED :
+	    	if(color == Green)
 			{
-			case Red:
-				HAL_GPIO_WritePin(GPIOB, TEST_IN_RED_Pin, state);
-				break;
-			case Green:
-				HAL_GPIO_WritePin(GPIOB, TEST_IN_GREEN_Pin, state);
-				break;
-			case Blue:
-				HAL_GPIO_WritePin(GPIOB, TEST_IN_BLUE_Pin, state);
-				break;
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOC, TRIP_GREEN1_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOC, TRIP_GREEN1_Pin, GPIO_PIN_SET);
 			}
-			break;
+			else if(color == Red)
+			{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOB, TRIP_RED1_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOB, TRIP_RED1_Pin, GPIO_PIN_SET);
+			}
+		   break; /* 可选的 */
+	    case TripLed1_LED :
+	    	if(color == Green)
+			{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOB, TRIP_GREEN_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOB, TRIP_GREEN_Pin, GPIO_PIN_SET);
+			}
+			else if(color == Red)
+			{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOB, TRIP_RED_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOB, TRIP_RED_Pin, GPIO_PIN_SET);
+			}
+		   break; /* 可选的 */
+	    case PWM_LED :
+	    	if(color == Green)
+			{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOA, HEART_GREEN_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOA, HEART_GREEN_Pin, GPIO_PIN_SET);
+			}
+			else if(color == Red)
+			{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOA, HEART_RED_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOA, HEART_RED_Pin, GPIO_PIN_SET);
+			}
+		   break; /* 可选的 */
+	    case CALIBRATE_LED :
+	    	if(color == Green)
+			{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOA, CALIBRATION_GREEN_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOA, CALIBRATION_GREEN_Pin, GPIO_PIN_SET);
+			}
+			else if(color == Red)
+			{
+	    		if(state)
+	    			HAL_GPIO_WritePin(GPIOA, CALIBRATION_RED_Pin, GPIO_PIN_RESET);
+	    		else
+	    			HAL_GPIO_WritePin(GPIOA, CALIBRATION_RED_Pin, GPIO_PIN_SET);
+			}
+		   break; /* 可选的 */
+	    /* 您可以有任意数量的 case 语句 */
+	    default : /* 可选的 */
+	    	break;
 	}
-
 }
-
 

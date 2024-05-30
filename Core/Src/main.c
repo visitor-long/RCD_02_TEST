@@ -18,20 +18,18 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dac.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "led.h"
 #include <stdio.h>
-#include "pwm_in.h"
-
-unsigned char test_in_flag = 0;
-
-unsigned char work_normol = 0;
+#include "oledbmp.h"
+#include "bmp.h"
+#include "oled_drive.h"
+#include "led.h"
+#include "stm32f1xx_it.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,13 +45,74 @@ void HAL_msDelay(uint32_t udelay);
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+#define FALSE 0
+#define TRUE 1
 
+#define SCL_H HAL_GPIO_WritePin(GPIOC, SCL_Pin, GPIO_PIN_SET)
+#define SCL_L HAL_GPIO_WritePin(GPIOC, SCL_Pin, GPIO_PIN_RESET)
+
+#define SDA_H HAL_GPIO_WritePin(GPIOC, SDA_Pin, GPIO_PIN_SET)
+#define SDA_L HAL_GPIO_WritePin(GPIOC, SDA_Pin, GPIO_PIN_RESET)
+
+#define SDA_read HAL_GPIO_ReadPin(GPIOC, SDA_Pin)
+
+#define OLED_CMD 0
+#define OLED_DATA 1
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+__IO float usDelayBase;
+void PY_usDelayTest(void)
+{
+  __IO uint32_t firstms, secondms;
+  __IO uint32_t counter = 0;
 
+  firstms = HAL_GetTick()+1;
+  secondms = firstms+1;
+
+  while(uwTick!=firstms) ;
+
+  while(uwTick!=secondms) counter++;
+
+  usDelayBase = ((float)counter)/1000;
+}
+
+void PY_Delay_us_t(uint32_t Delay)
+{
+  __IO uint32_t delayReg;
+  __IO uint32_t usNum = (uint32_t)(Delay*usDelayBase);
+
+  delayReg = 0;
+  while(delayReg!=usNum) delayReg++;
+}
+
+void PY_usDelayOptimize(void)
+{
+  __IO uint32_t firstms, secondms;
+  __IO float coe = 1.0;
+
+  firstms = HAL_GetTick();
+  PY_Delay_us_t(1000000) ;
+  secondms = HAL_GetTick();
+
+  coe = ((float)1000)/(secondms-firstms);
+  usDelayBase = coe*usDelayBase;
+}
+
+void PY_Delay_us(uint32_t Delay)
+{
+  __IO uint32_t delayReg;
+
+  __IO uint32_t msNum = Delay/1000;
+  __IO uint32_t usNum = (uint32_t)((Delay%1000)*usDelayBase);
+
+  if(msNum>0) HAL_Delay(msNum);
+
+  delayReg = 0;
+  while(delayReg!=usNum) delayReg++;
+}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,6 +123,18 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void IIC_Init(void);
+void IIC_Start(void);
+void IIC_Stop(void);
+void IIC_Send_Byte(uint8_t txd);
+uint8_t IIC_Read_Byte(unsigned char ack);
+uint8_t IIC_Wait_Ack(void);
+void IIC_Ack(void);
+void IIC_NAck(void);
+
+#define SDA_IN()  my_SDA_IN()
+#define SDA_OUT() my_SDA_OUT()
+
 
 /* USER CODE END 0 */
 
@@ -74,7 +145,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  unsigned char high_time = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -95,118 +166,99 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DAC_Init();
-  MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_TIM1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
-  HAL_TIM_IC_Start_IT (&htim1,TIM_CHANNEL_1);
-  HAL_TIM_IC_Start_IT (&htim1,TIM_CHANNEL_2);
-
-  HAL_TIM_IC_Start_IT (&htim1,TIM_CHANNEL_4);
-  HAL_TIM_Base_Start_IT(&htim2);
-  HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+  OLED_Init();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  PY_usDelayTest();
+  PY_usDelayOptimize();
+
+  OnOffLedLight(1,2,0);
+  OnOffLedLight(2,2,0);
+  OnOffLedLight(3,2,0);
+  OnOffLedLight(4,2,0);
+  OnOffLedLight(5,2,0);
+  OnOffLedLight(6,2,0);
+
+	OLED_Init();
+	OLED_Clear();
+	OLED_ShowString(0,0,"Current ",16);
+	OLED_ShowString(0,2,"        XX.XXMA",12);
+
+	HAL_TIM_Base_Start(&htim2);
   printf("init success\r\n");
+//  test_in();
+
+
+
   while (1)
   {
-	if(HAL_GPIO_ReadPin(GPIOB, Calibration_START_Pin) == 0 && work_normol == 1)	//校准控制
-	{
-		HAL_msDelay(10);
-		while(HAL_GPIO_ReadPin(GPIOB, Calibration_START_Pin) == 0);	//校准控制
 
-		HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 4095);
-		HAL_msDelay(200);
-		HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0);
+	  if(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0)
+	  {
+		  HAL_msDelay(50);
+		  while(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0);
+		  test_in();
 
-		test_in_flag = 1;
+		  HAL_msDelay(3000);
 
-		SelectLedLight(TestLed,Red,0);
-		SelectLedLight(TestLed,Green,0);
-		SelectLedLight(TestLed,Blue,0);
-		SelectLedLight(TestLed,Green,1);
+		  if(Flag == 3)
+		  {
+			  OnOffLedLight(6,1,0); //Calibrate red
+			  OnOffLedLight(6,2,1); //Calibrate green
+		  }
+		  else
+		  {
+			  Flag = 0;
+			  OnOffLedLight(6,2,0);
+		  }
 
-		SelectLedLight(CalibrateLed,Red,0);
-		SelectLedLight(CalibrateLed,Green,0);
-		SelectLedLight(CalibrateLed,Blue,0);
-	}
+		  printf("capture_start1: %ld\r\ncapture_start2: %ld\r\n",capture_start1,capture_start2);
+		  printf("capture_end: %ld\r\n",capture_end1);
+//		  printf("capture_time1: %ld\r\ncapture_time2: %ld\r\n",capture_time1,capture_time2);
+		  printf("pwm_time: %d\r\n",Counter);
 
-	 if(end_flag)
-	 {
-//		printf ("Cap_val1 is :%ld ,  Cap_val2 is : %ld \r\n",Cap_val1 ,Cap_val2 );
-//		printf ("Duty is :%0.2f%% Frequency is : %0.2f\r\n",Duty  ,Frequency  );
-		end_flag=0;
-	 }
+//		  printf("capture_time2 %d\r\n",capture_time2);
 
-	if(((int)Frequency >= 940 && (int)Frequency <= 1060) && ((int)Duty > 49 && (int)Duty < 51))//Heart beat信�?�
-	{
-		SelectLedLight(HeartLed,Red,0);
-		SelectLedLight(HeartLed,Green,0);
-		SelectLedLight(HeartLed,Blue,0);
-		SelectLedLight(HeartLed,Green,1);
-		work_normol = 1;
-	}
-	else if(test_in_flag == 0)
-	{
-		SelectLedLight(CalibrateLed,Red,0);
-		SelectLedLight(CalibrateLed,Green,0);
-		SelectLedLight(CalibrateLed,Blue,0);
+	  }
 
-		SelectLedLight(HeartLed,Red,0);
-		SelectLedLight(HeartLed,Green,0);
-		SelectLedLight(HeartLed,Blue,0);
-		SelectLedLight(HeartLed,Red,1);
-		work_normol = 0;
-	}
+//	  printf("capture_time1 %d\r\n",capture_time1);
+//	  printf("capture_time2 %d\r\n",capture_time2);
 
-	if(test_in_flag == 2)
-	{
-		trip_time = 0;
-		HAL_msDelay(1700);
-		if(((int)trip_time > 120 && (int)trip_time < 140) && work_normol == 1)
-		{
-			SelectLedLight(CalibrateLed,Red,0);
-			SelectLedLight(CalibrateLed,Green,0);
-			SelectLedLight(CalibrateLed,Blue,0);
-			SelectLedLight(CalibrateLed,Green,1);
-		}
-		else
-		{
-			SelectLedLight(CalibrateLed,Red,0);
-			SelectLedLight(CalibrateLed,Green,0);
-			SelectLedLight(CalibrateLed,Blue,0);
-			SelectLedLight(CalibrateLed,Red,1);
-		}
-		test_in_flag = 0;
-		trip_time = 0;
-		trip_flag = 0;
-		SelectLedLight(TestLed,Red,0);
-		SelectLedLight(TestLed,Green,0);
-		SelectLedLight(TestLed,Blue,0);
 
-		SelectLedLight(TripLed,Red,0);
-		SelectLedLight(TripLed,Green,0);
-		SelectLedLight(TripLed,Blue,0);
 
-	}
-
-	if(trip_flag == 1 && test_in_flag == 0)
-	{
-		HAL_msDelay(500);
-		if(HAL_GPIO_ReadPin(GPIOA, TRIP_INPUT_Pin) == 0)
-		{
-			trip_flag = 0;
-			trip_time = 0;
-		}
-	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+//	  if(HAL_GPIO_ReadPin(GPIOC, ERROR_INPUT_Pin))
+//	  {
+//		  OnOffLedLight(4,2,1);
+//	  }
+//	  else if(HAL_GPIO_ReadPin(GPIOC, ERROR_INPUT_Pin) == 0)
+//	  {
+//		  OnOffLedLight(4,2,0);
+//	  }
+//
+//	  if(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0)
+//	  {
+//		  HAL_msDelay(20);
+//		  while(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0);
+//		  HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_RESET);
+//		  HAL_msDelay(100);
+//		  HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_SET);
+//	  }
+//	 if(PWM_Flag)
+//	 {
+//		 PWM_Flag = 0;
+//		 printf("Counter %d\r\n",Counter);
+//		 HAL_msDelay(1000);
+//	 }
   }
   /* USER CODE END 3 */
 }
@@ -272,6 +324,7 @@ void HAL_usDelay(uint32_t udelay)
   }
 }
 
+
 void HAL_msDelay(uint32_t udelay)
 {
 	uint16_t i = 0;
@@ -281,12 +334,360 @@ void HAL_msDelay(uint32_t udelay)
 	}
 }
 
-//HAL_msDelay(2000);
-//	  SelectLedLight(CalibrateLed,Red,0);
-//	  SelectLedLight(CalibrateLed,Green,0);
-//	  SelectLedLight(CalibrateLed,Blue,0);
-//	  SelectLedLight(CalibrateLed,Red,1);
-//
+
+void test_in()
+{
+	HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_RESET);
+	HAL_msDelay(375);
+	HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_SET);
+	HAL_msDelay(200);
+	HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_RESET);
+
+	HAL_GPIO_TogglePin(CALIBRATION_RED_GPIO_Port, CALIBRATION_RED_Pin);
+//	OnOffLedLight(6,1,1);
+
+}
+
+
+void my_SDA_IN(void)
+{
+	GPIO_InitTypeDef GPIO_InitStruct= {0};
+	GPIO_InitStruct.Pin = SDA_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_PULLUP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
+void my_SDA_OUT(void)
+{
+	GPIO_InitTypeDef GPIO_InitStruct;
+	GPIO_InitStruct.Pin = SDA_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
+
+void IIC_Init(void)
+{
+	my_SDA_OUT();
+	SDA_L;
+	SCL_L;
+//	SDA_H;
+//	SCL_H;
+}
+
+void IIC_Start(void)
+{
+	SDA_OUT();
+	SDA_H;
+	SCL_H;
+	HAL_usDelay(5);
+ 	SDA_L;
+ 	HAL_usDelay(5);
+	SCL_L;
+}
+
+void IIC_Stop(void)
+{
+	SDA_OUT();
+	SCL_L;
+	SDA_L;
+	HAL_usDelay(4);
+	SCL_H;
+	SDA_H;
+	HAL_usDelay(4);
+}
+
+uint8_t IIC_Wait_Ack(void)
+{
+	uint8_t ucErrTime=0;
+	SDA_IN();
+	SDA_H;HAL_usDelay(1);
+	SCL_H;HAL_usDelay(1);
+	while(SDA_read)
+	{
+		ucErrTime++;
+		if(ucErrTime>250)
+		{
+			IIC_Stop();
+			return 1;
+		}
+	}
+	SCL_L;
+	return 0;
+}
+
+void IIC_Ack(void)
+{
+	SCL_L;
+	SDA_OUT();
+	SDA_L;
+	HAL_usDelay(2);
+	SCL_H;
+	HAL_usDelay(2);
+	SCL_L;
+}
+
+void IIC_NAck(void)
+{
+	SCL_L;
+	SDA_OUT();
+	SDA_H;
+	HAL_usDelay(2);
+	SCL_H;
+	HAL_usDelay(2);
+	SCL_L;
+}
+
+void IIC_Send_Byte(uint8_t txd)
+{
+    uint8_t t;
+	SDA_OUT();
+    SCL_L;
+    for(t=0;t<8;t++)
+    {
+		if((txd&0x80)>>7)
+			SDA_H;
+		else
+			SDA_L;
+		txd<<=1;
+		HAL_usDelay(2);
+		SCL_H;
+		HAL_usDelay(2);
+		SCL_L;
+		HAL_usDelay(2);
+    }
+}
+
+uint8_t IIC_Read_Byte(unsigned char ack)
+{
+	unsigned char i,receive=0;
+	SDA_IN();
+    for(i=0;i<8;i++ )
+	{
+        SCL_L;
+        HAL_usDelay(2);
+		SCL_H;
+        receive<<=1;
+        if(SDA_read)receive++;
+        HAL_usDelay(1);
+    }
+    if (!ack)
+        IIC_NAck();
+    else
+        IIC_Ack();
+    return receive;
+}
+
+void OLED_WR_Byte(uint8_t dat,uint8_t mode)
+{
+	IIC_Start();
+	IIC_Send_Byte(0x78);
+	IIC_Wait_Ack();
+	if(mode)
+		IIC_Send_Byte(0x40);
+	else
+		IIC_Send_Byte(0x00);
+	IIC_Wait_Ack();
+	IIC_Send_Byte(dat);
+	IIC_Wait_Ack();
+	IIC_Stop();
+}
+
+// fill_Picture
+void fill_picture(unsigned char fill_Data)
+{
+	unsigned char m,n;
+	for(m=0;m<8;m++)
+	{
+		OLED_WR_Byte(0xb0+m,0);		//page0-page1
+		OLED_WR_Byte(0x00,0);		//low column start address
+		OLED_WR_Byte(0x10,0);		//high column start address
+		for(n=0;n<128;n++)
+			{
+				OLED_WR_Byte(fill_Data,1);
+			}
+	}
+}
+void OLED_Set_Pos(unsigned char x, unsigned char y)
+{ 	OLED_WR_Byte(0xb0+y,OLED_CMD);
+	OLED_WR_Byte(((x&0xf0)>>4)|0x10,OLED_CMD);
+	OLED_WR_Byte((x&0x0f),OLED_CMD);
+}
+
+void OLED_Display_On(void)
+{
+	OLED_WR_Byte(0X8D,OLED_CMD);  //SET DCDC
+	OLED_WR_Byte(0X14,OLED_CMD);  //DCDC ON
+	OLED_WR_Byte(0XAF,OLED_CMD);  //DISPLAY ON
+}
+
+void OLED_Display_Off(void)
+{
+	OLED_WR_Byte(0X8D,OLED_CMD);  //SET DCDC
+	OLED_WR_Byte(0X10,OLED_CMD);  //DCDC OFF
+	OLED_WR_Byte(0XAE,OLED_CMD);  //DISPLAY OFF
+}
+
+void OLED_Clear(void)
+{
+	uint8_t i,n;
+	for(i=0;i<8;i++)
+	{
+		OLED_WR_Byte(0xb0+i,OLED_CMD);
+		OLED_WR_Byte(0x00,OLED_CMD);
+		OLED_WR_Byte(0x10,OLED_CMD);
+		for(n=0;n<128;n++)OLED_WR_Byte(0,OLED_DATA);
+	}
+}
+void OLED_On(void)
+{
+	uint8_t i,n;
+	for(i=0;i<8;i++)
+	{
+		OLED_WR_Byte (0xb0+i,OLED_CMD);
+		OLED_WR_Byte (0x00,OLED_CMD);
+		OLED_WR_Byte (0x10,OLED_CMD);
+		for(n=0;n<128;n++)OLED_WR_Byte(1,OLED_DATA);
+	}
+}
+
+void OLED_ShowChar(uint8_t x,uint8_t y,uint8_t chr,uint8_t Char_Size)
+{
+	unsigned char c=0,i=0;
+		c=chr-' ';
+		if(x>Max_Column-1){x=0;y=y+2;}
+		if(Char_Size ==16)
+			{
+			OLED_Set_Pos(x,y);
+			for(i=0;i<8;i++)
+			OLED_WR_Byte(F8X16[c*16+i],OLED_DATA);
+			OLED_Set_Pos(x,y+1);
+			for(i=0;i<8;i++)
+			OLED_WR_Byte(F8X16[c*16+i+8],OLED_DATA);
+			}
+			else {
+				OLED_Set_Pos(x,y);
+				for(i=0;i<6;i++)
+				OLED_WR_Byte(F6x8[c][i],OLED_DATA);
+
+			}
+}
+
+uint32_t oled_pow(uint8_t m,uint8_t n)
+{
+	uint32_t result=1;
+	while(n--)result*=m;
+	return result;
+}
+
+void OLED_ShowNum(uint8_t x,uint8_t y,uint32_t num,uint8_t len,uint8_t size2)
+{
+	uint8_t t,temp;
+	uint8_t enshow=0;
+	for(t=0;t<len;t++)
+	{
+		temp=(num/oled_pow(10,len-t-1))%10;
+		if(enshow==0&&t<(len-1))
+		{
+			if(temp==0)
+			{
+				OLED_ShowChar(x+(size2/2)*t,y,' ',size2);
+				continue;
+			}else enshow=1;
+
+		}
+	 	OLED_ShowChar(x+(size2/2)*t,y,temp+'0',size2);
+	}
+}
+
+void OLED_ShowString(uint8_t x,uint8_t y,uint8_t *chr,uint8_t Char_Size)
+{
+	unsigned char j=0;
+	while (chr[j]!='\0')
+	{		OLED_ShowChar(x,y,chr[j],Char_Size);
+			x+=8;
+		if(x>120){x=0;y+=2;}
+			j++;
+	}
+}
+
+void OLED_ShowCHinese(uint8_t x,uint8_t y,uint8_t no)
+{
+	uint8_t t;
+	OLED_Set_Pos(x,y);
+    for(t=0;t<16;t++)
+	{
+		OLED_WR_Byte(Hzk[2*no][t],OLED_DATA);
+
+    }
+		OLED_Set_Pos(x,y+1);
+    for(t=0;t<16;t++)
+	{
+		OLED_WR_Byte(Hzk[2*no+1][t],OLED_DATA);
+    }
+}
+
+void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,unsigned char BMP[])
+{
+ unsigned int j=0;
+ unsigned char x,y;
+
+  if(y1%8==0) y=y1/8;
+  else y=y1/8+1;
+	for(y=y0;y<y1;y++)
+	{
+		OLED_Set_Pos(x0,y);
+    for(x=x0;x<x1;x++)
+	    {
+	    	OLED_WR_Byte(BMP[j++],OLED_DATA);
+	    }
+	}
+}
+
+void OLED_Init(void)
+{
+    PY_Delay_us_t(200000);
+    OLED_WR_Byte(0xAE,OLED_CMD);
+
+	OLED_WR_Byte(0x40,OLED_CMD);//---set low column address
+	OLED_WR_Byte(0xB0,OLED_CMD);//---set high column address
+
+	OLED_WR_Byte(0xC8,OLED_CMD);//-not offset
+
+	OLED_WR_Byte(0x81,OLED_CMD);
+	OLED_WR_Byte(0xff,OLED_CMD);
+
+	OLED_WR_Byte(0xa1,OLED_CMD);
+
+	OLED_WR_Byte(0xa6,OLED_CMD);
+
+	OLED_WR_Byte(0xa8,OLED_CMD);
+	OLED_WR_Byte(0x1f,OLED_CMD);
+
+	OLED_WR_Byte(0xd3,OLED_CMD);
+	OLED_WR_Byte(0x00,OLED_CMD);
+
+	OLED_WR_Byte(0xd5,OLED_CMD);
+	OLED_WR_Byte(0xf0,OLED_CMD);
+
+	OLED_WR_Byte(0xd9,OLED_CMD);
+	OLED_WR_Byte(0x22,OLED_CMD);
+
+	OLED_WR_Byte(0xda,OLED_CMD);
+	OLED_WR_Byte(0x02,OLED_CMD);
+
+	OLED_WR_Byte(0xdb,OLED_CMD);
+	OLED_WR_Byte(0x49,OLED_CMD);
+
+	OLED_WR_Byte(0x8d,OLED_CMD);
+	OLED_WR_Byte(0x14,OLED_CMD);
+
+	OLED_WR_Byte(0xaf,OLED_CMD);
+	OLED_Clear();
+}
+
 /* USER CODE END 4 */
 
 /**

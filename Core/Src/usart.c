@@ -124,6 +124,4 @@ PUTCHAR_PROTOTYPE
 	HAL_UART_Transmit(&huart1,(uint8_t*)&ch, 1, 0xFFFF);
 	return ch;
 }
-
-
 /* USER CODE END 1 */
