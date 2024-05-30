@@ -54,8 +54,6 @@ extern unsigned char work_normol;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-void test_in();
-
 
 /* USER CODE END EFP */
 
@@ -102,16 +100,8 @@ void test_in();
 #define ERROR_GREEN_GPIO_Port GPIOC
 #define ERROR_BLUE_Pin GPIO_PIN_8
 #define ERROR_BLUE_GPIO_Port GPIOA
-#define PWM_INT_Pin GPIO_PIN_10
-#define PWM_INT_GPIO_Port GPIOC
-#define PWM_INT_EXTI_IRQn EXTI15_10_IRQn
 #define ERROR_INPUT_Pin GPIO_PIN_11
 #define ERROR_INPUT_GPIO_Port GPIOC
-#define TRIP_OUT2_Pin GPIO_PIN_12
-#define TRIP_OUT2_GPIO_Port GPIOC
-#define TRIP_OUT1_Pin GPIO_PIN_2
-#define TRIP_OUT1_GPIO_Port GPIOD
-#define TRIP_OUT1_EXTI_IRQn EXTI2_IRQn
 #define Calibrate_KEY_Pin GPIO_PIN_3
 #define Calibrate_KEY_GPIO_Port GPIOB
 

@@ -61,8 +61,8 @@ all: main-build
 main-build: RCD_04_TEST.elf secondary-outputs
 
 # Tool invocations
-RCD_04_TEST.elf RCD_04_TEST.map: $(OBJS) $(USER_OBJS) C:\Users\wolf.long\Desktop\RCD_04_TEST\STM32F103RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "RCD_04_TEST.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\wolf.long\Desktop\RCD_04_TEST\STM32F103RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="RCD_04_TEST.map" -Wl,--gc-sections -static -u_printf --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+RCD_04_TEST.elf RCD_04_TEST.map: $(OBJS) $(USER_OBJS) C:\Wolf\RCD_04_TEST\STM32F103RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "RCD_04_TEST.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Wolf\RCD_04_TEST\STM32F103RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="RCD_04_TEST.map" -Wl,--gc-sections -static -u_printf --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

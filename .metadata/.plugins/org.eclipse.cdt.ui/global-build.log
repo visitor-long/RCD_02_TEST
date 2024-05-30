@@ -1,0 +1,332 @@
+17:17:44 **** Incremental Build of configuration Debug for project RCD_04_TEST ****
+make -j12 all 
+arm-none-eabi-gcc "../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xE -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/wolf.long/Documents/STM32_Project/RCD_02_TEST/Customize" -I"C:/Users/wolf.long/Documents/GitHub/RCD_02_TEST/Customize" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.d" -MT"Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.o"
+arm-none-eabi-gcc "../Customize/led.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xE -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/wolf.long/Documents/STM32_Project/RCD_02_TEST/Customize" -I"C:/Users/wolf.long/Documents/GitHub/RCD_02_TEST/Customize" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Customize/led.d" -MT"Customize/led.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Customize/led.o"
+arm-none-eabi-gcc "../Core/Src/gpio.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xE -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/wolf.long/Documents/STM32_Project/RCD_02_TEST/Customize" -I"C:/Users/wolf.long/Documents/GitHub/RCD_02_TEST/Customize" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/gpio.d" -MT"Core/Src/gpio.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/gpio.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xE -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/wolf.long/Documents/STM32_Project/RCD_02_TEST/Customize" -I"C:/Users/wolf.long/Documents/GitHub/RCD_02_TEST/Customize" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/gpio.c: In function 'MX_GPIO_Init':
+../Core/Src/gpio.c:54:21: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   54 |   HAL_GPIO_WritePin(GPIOC, SCL_Pin|SDA_Pin|HEART_BLUE_Pin|TRIP_GREEN1_Pin
+      |                     ^~~~~
+      |                     GPIOD
+../Core/Src/gpio.c:54:21: note: each undeclared identifier is reported only once for each function it appears in
+In file included from ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h:29,
+                 from ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h:27,
+                 from ../Core/Inc/stm32f1xx_hal_conf.h:238,
+                 from ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:29,
+                 from ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c:105:
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c: In function 'HAL_GPIO_Init':
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_ex.h:822:53: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOx'?
+  822 |                                    ((__GPIOx__) == (GPIOC))? 2uL :\
+      |                                                     ^~~~~
+../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:177:42: note: in definition of macro 'SET_BIT'
+  177 | #define SET_BIT(REG, BIT)     ((REG) |= (BIT))
+      |                                          ^~~
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c:294:24: note: in expansion of macro 'GPIO_GET_INDEX'
+  294 |         SET_BIT(temp, (GPIO_GET_INDEX(GPIOx)) << (4u * (position & 0x03u)));
+      |                        ^~~~~~~~~~~~~~
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_ex.h:822:53: note: each undeclared identifier is reported only once for each function it appears in
+  822 |                                    ((__GPIOx__) == (GPIOC))? 2uL :\
+      |                                                     ^~~~~
+../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:177:42: note: in definition of macro 'SET_BIT'
+  177 | #define SET_BIT(REG, BIT)     ((REG) |= (BIT))
+      |                                          ^~~
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c:294:24: note: in expansion of macro 'GPIO_GET_INDEX'
+  294 |         SET_BIT(temp, (GPIO_GET_INDEX(GPIOx)) << (4u * (position & 0x03u)));
+      |                        ^~~~~~~~~~~~~~
+make: *** [Core/Src/subdir.mk:40: Core/Src/gpio.o] Error 1
+make: *** Waiting for unfinished jobs....
+In file included from ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h:212,
+                 from ../Core/Inc/stm32f1xx_hal_conf.h:242,
+                 from ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:29,
+                 from ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c:105:
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c: In function 'HAL_GPIO_DeInit':
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_ex.h:822:53: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOx'?
+  822 |                                    ((__GPIOx__) == (GPIOC))? 2uL :\
+      |                                                     ^~~~~
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c:376:19: note: in expansion of macro 'GPIO_GET_INDEX'
+  376 |       if (tmp == (GPIO_GET_INDEX(GPIOx) << (4u * (position & 0x03u))))
+      |                   ^~~~~~~~~~~~~~
+../Customize/led.c: In function 'OnOffLedLight':
+../Customize/led.c:17:44: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   17 |                          HAL_GPIO_WritePin(GPIOC, ERROR_GREEN_Pin, GPIO_PIN_RESET);
+      |                                            ^~~~~
+      |                                            GPIOD
+../Customize/led.c:17:44: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [Drivers/STM32F1xx_HAL_Driver/Src/subdir.mk:58: Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.o] Error 1
+make: *** [Customize/subdir.mk:22: Customize/led.o] Error 1
+In file included from ../Core/Src/main.c:27:
+../Core/Inc/oledbmp.h:13:1: warning: missing braces around initializer [-Wmissing-braces]
+   13 | {
+      | ^
+   14 | 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,// sp
+      | {                                 }
+   15 | 0x00, 0x00, 0x00, 0x2f, 0x00, 0x00,// !
+      | {                                 }
+   16 | 0x00, 0x00, 0x07, 0x00, 0x07, 0x00,// "
+      | {                                 }
+   17 | 0x00, 0x14, 0x7f, 0x14, 0x7f, 0x14,// #
+      | {                                 }
+   18 | 0x00, 0x24, 0x2a, 0x7f, 0x2a, 0x12,// $
+      | {                                 }
+   19 | 0x00, 0x62, 0x64, 0x08, 0x13, 0x23,// %
+      | {                                 }
+   20 | 0x00, 0x36, 0x49, 0x55, 0x22, 0x50,// &
+      | {                                 }
+   21 | 0x00, 0x00, 0x05, 0x03, 0x00, 0x00,// '
+      | {                                 }
+   22 | 0x00, 0x00, 0x1c, 0x22, 0x41, 0x00,// (
+      | {                                 }
+   23 | 0x00, 0x00, 0x41, 0x22, 0x1c, 0x00,// )
+      | {                                 }
+   24 | 0x00, 0x14, 0x08, 0x3E, 0x08, 0x14,// *
+      | {                                 }
+   25 | 0x00, 0x08, 0x08, 0x3E, 0x08, 0x08,// +
+      | {                                 }
+   26 | 0x00, 0x00, 0x00, 0xA0, 0x60, 0x00,// ,
+      | {                                 }
+   27 | 0x00, 0x08, 0x08, 0x08, 0x08, 0x08,// -
+      | {                                 }
+   28 | 0x00, 0x00, 0x60, 0x60, 0x00, 0x00,// .
+      | {                                 }
+   29 | 0x00, 0x20, 0x10, 0x08, 0x04, 0x02,// /
+      | {                                 }
+   30 | 0x00, 0x3E, 0x51, 0x49, 0x45, 0x3E,// 0
+      | {                                 }
+   31 | 0x00, 0x00, 0x42, 0x7F, 0x40, 0x00,// 1
+      | {                                 }
+   32 | 0x00, 0x42, 0x61, 0x51, 0x49, 0x46,// 2
+      | {                                 }
+   33 | 0x00, 0x21, 0x41, 0x45, 0x4B, 0x31,// 3
+      | {                                 }
+   34 | 0x00, 0x18, 0x14, 0x12, 0x7F, 0x10,// 4
+      | {                                 }
+   35 | 0x00, 0x27, 0x45, 0x45, 0x45, 0x39,// 5
+      | {                                 }
+   36 | 0x00, 0x3C, 0x4A, 0x49, 0x49, 0x30,// 6
+      | {                                 }
+   37 | 0x00, 0x01, 0x71, 0x09, 0x05, 0x03,// 7
+      | {                                 }
+   38 | 0x00, 0x36, 0x49, 0x49, 0x49, 0x36,// 8
+      | {                                 }
+   39 | 0x00, 0x06, 0x49, 0x49, 0x29, 0x1E,// 9
+      | {                                 }
+   40 | 0x00, 0x00, 0x36, 0x36, 0x00, 0x00,// :
+      | {                                 }
+   41 | 0x00, 0x00, 0x56, 0x36, 0x00, 0x00,// ;
+      | {                                 }
+   42 | 0x00, 0x08, 0x14, 0x22, 0x41, 0x00,// <
+      | {                                 }
+   43 | 0x00, 0x14, 0x14, 0x14, 0x14, 0x14,// =
+      | {                                 }
+   44 | 0x00, 0x00, 0x41, 0x22, 0x14, 0x08,// >
+      | {                                 }
+   45 | 0x00, 0x02, 0x01, 0x51, 0x09, 0x06,// ?
+      | {                                 }
+   46 | 0x00, 0x32, 0x49, 0x59, 0x51, 0x3E,// @
+      | {                                 }
+   47 | 0x00, 0x7C, 0x12, 0x11, 0x12, 0x7C,// A
+      | {                                 }
+   48 | 0x00, 0x7F, 0x49, 0x49, 0x49, 0x36,// B
+      | {                                 }
+   49 | 0x00, 0x3E, 0x41, 0x41, 0x41, 0x22,// C
+      | {                                 }
+   50 | 0x00, 0x7F, 0x41, 0x41, 0x22, 0x1C,// D
+      | {                                 }
+   51 | 0x00, 0x7F, 0x49, 0x49, 0x49, 0x41,// E
+      | {                                 }
+   52 | 0x00, 0x7F, 0x09, 0x09, 0x09, 0x01,// F
+      | {                                 }
+   53 | 0x00, 0x3E, 0x41, 0x49, 0x49, 0x7A,// G
+      | {                                 }
+   54 | 0x00, 0x7F, 0x08, 0x08, 0x08, 0x7F,// H
+      | {                                 }
+   55 | 0x00, 0x00, 0x41, 0x7F, 0x41, 0x00,// I
+      | {                                 }
+   56 | 0x00, 0x20, 0x40, 0x41, 0x3F, 0x01,// J
+      | {                                 }
+   57 | 0x00, 0x7F, 0x08, 0x14, 0x22, 0x41,// K
+      | {                                 }
+   58 | 0x00, 0x7F, 0x40, 0x40, 0x40, 0x40,// L
+      | {                                 }
+   59 | 0x00, 0x7F, 0x02, 0x0C, 0x02, 0x7F,// M
+      | {                                 }
+   60 | 0x00, 0x7F, 0x04, 0x08, 0x10, 0x7F,// N
+      | {                                 }
+   61 | 0x00, 0x3E, 0x41, 0x41, 0x41, 0x3E,// O
+      | {                                 }
+   62 | 0x00, 0x7F, 0x09, 0x09, 0x09, 0x06,// P
+      | {                                 }
+   63 | 0x00, 0x3E, 0x41, 0x51, 0x21, 0x5E,// Q
+      | {                                 }
+   64 | 0x00, 0x7F, 0x09, 0x19, 0x29, 0x46,// R
+      | {                                 }
+   65 | 0x00, 0x46, 0x49, 0x49, 0x49, 0x31,// S
+      | {                                 }
+   66 | 0x00, 0x01, 0x01, 0x7F, 0x01, 0x01,// T
+      | {                                 }
+   67 | 0x00, 0x3F, 0x40, 0x40, 0x40, 0x3F,// U
+      | {                                 }
+   68 | 0x00, 0x1F, 0x20, 0x40, 0x20, 0x1F,// V
+      | {                                 }
+   69 | 0x00, 0x3F, 0x40, 0x38, 0x40, 0x3F,// W
+      | {                                 }
+   70 | 0x00, 0x63, 0x14, 0x08, 0x14, 0x63,// X
+      | {                                 }
+   71 | 0x00, 0x07, 0x08, 0x70, 0x08, 0x07,// Y
+      | {                                 }
+   72 | 0x00, 0x61, 0x51, 0x49, 0x45, 0x43,// Z
+      | {                                 }
+   73 | 0x00, 0x00, 0x7F, 0x41, 0x41, 0x00,// [
+      | {                                 }
+   74 | 0x00, 0x55, 0x2A, 0x55, 0x2A, 0x55,// 55
+      | {                                 }
+   75 | 0x00, 0x00, 0x41, 0x41, 0x7F, 0x00,// ]
+      | {                                 }
+   76 | 0x00, 0x04, 0x02, 0x01, 0x02, 0x04,// ^
+      | {                                 }
+   77 | 0x00, 0x40, 0x40, 0x40, 0x40, 0x40,// _
+      | {                                 }
+   78 | 0x00, 0x00, 0x01, 0x02, 0x04, 0x00,// '
+      | {                                 }
+   79 | 0x00, 0x20, 0x54, 0x54, 0x54, 0x78,// a
+      | {                                 }
+   80 | 0x00, 0x7F, 0x48, 0x44, 0x44, 0x38,// b
+      | {                                 }
+   81 | 0x00, 0x38, 0x44, 0x44, 0x44, 0x20,// c
+      | {                                 }
+   82 | 0x00, 0x38, 0x44, 0x44, 0x48, 0x7F,// d
+      | {                                 }
+   83 | 0x00, 0x38, 0x54, 0x54, 0x54, 0x18,// e
+      | {                                 }
+   84 | 0x00, 0x08, 0x7E, 0x09, 0x01, 0x02,// f
+      | {                                 }
+   85 | 0x00, 0x18, 0xA4, 0xA4, 0xA4, 0x7C,// g
+      | {                                 }
+   86 | 0x00, 0x7F, 0x08, 0x04, 0x04, 0x78,// h
+      | {                                 }
+   87 | 0x00, 0x00, 0x44, 0x7D, 0x40, 0x00,// i
+      | {                                 }
+   88 | 0x00, 0x40, 0x80, 0x84, 0x7D, 0x00,// j
+      | {                                 }
+   89 | 0x00, 0x7F, 0x10, 0x28, 0x44, 0x00,// k
+      | {                                 }
+   90 | 0x00, 0x00, 0x41, 0x7F, 0x40, 0x00,// l
+      | {                                 }
+   91 | 0x00, 0x7C, 0x04, 0x18, 0x04, 0x78,// m
+      | {                                 }
+   92 | 0x00, 0x7C, 0x08, 0x04, 0x04, 0x78,// n
+      | {                                 }
+   93 | 0x00, 0x38, 0x44, 0x44, 0x44, 0x38,// o
+      | {                                 }
+   94 | 0x00, 0xFC, 0x24, 0x24, 0x24, 0x18,// p
+      | {                                 }
+   95 | 0x00, 0x18, 0x24, 0x24, 0x18, 0xFC,// q
+      | {                                 }
+   96 | 0x00, 0x7C, 0x08, 0x04, 0x04, 0x08,// r
+      | {                                 }
+   97 | 0x00, 0x48, 0x54, 0x54, 0x54, 0x20,// s
+      | {                                 }
+   98 | 0x00, 0x04, 0x3F, 0x44, 0x40, 0x20,// t
+      | {                                 }
+   99 | 0x00, 0x3C, 0x40, 0x40, 0x20, 0x7C,// u
+      | {                                 }
+  100 | 0x00, 0x1C, 0x20, 0x40, 0x20, 0x1C,// v
+      | {                                 }
+  101 | 0x00, 0x3C, 0x40, 0x30, 0x40, 0x3C,// w
+      | {                                 }
+  102 | 0x00, 0x44, 0x28, 0x10, 0x28, 0x44,// x
+      | {                                 }
+  103 | 0x00, 0x1C, 0xA0, 0xA0, 0xA0, 0x7C,// y
+      | {                                 }
+  104 | 0x00, 0x44, 0x64, 0x54, 0x4C, 0x44,// z
+      | {                                 }
+  105 | 0x14, 0x14, 0x14, 0x14, 0x14, 0x14,// horiz lines
+      | {
+  106 | };
+      | }
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:177:3: warning: implicit declaration of function 'OnOffLedLight' [-Wimplicit-function-declaration]
+  177 |   OnOffLedLight(1,2,0);
+      |   ^~~~~~~~~~~~~
+../Core/Src/main.c:186:29: warning: pointer targets in passing argument 3 of 'OLED_ShowString' differ in signedness [-Wpointer-sign]
+  186 |         OLED_ShowString(0,0,"Current ",16);
+      |                             ^~~~~~~~~~
+      |                             |
+      |                             char *
+In file included from ../Core/Src/main.c:29:
+../Core/Inc/oled_drive.h:44:52: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+   44 | void OLED_ShowString(uint8_t x,uint8_t y, uint8_t *p,uint8_t Char_Size);
+      |                                           ~~~~~~~~~^
+../Core/Src/main.c:187:29: warning: pointer targets in passing argument 3 of 'OLED_ShowString' differ in signedness [-Wpointer-sign]
+  187 |         OLED_ShowString(0,2,"        XX.XXMA",12);
+      |                             ^~~~~~~~~~~~~~~~~
+      |                             |
+      |                             char *
+In file included from ../Core/Src/main.c:29:
+../Core/Inc/oled_drive.h:44:52: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+   44 | void OLED_ShowString(uint8_t x,uint8_t y, uint8_t *p,uint8_t Char_Size);
+      |                                           ~~~~~~~~~^
+../Core/Src/main.c:196:31: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+  196 |           if(HAL_GPIO_ReadPin(GPIOC, ERROR_INPUT_Pin))
+      |                               ^~~~~
+      |                               GPIOD
+../Core/Src/main.c:196:31: note: each undeclared identifier is reported only once for each function it appears in
+../Core/Src/main.c: In function 'IIC_Init':
+../Core/Src/main.c:53:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   53 | #define SDA_L HAL_GPIO_WritePin(GPIOC, SDA_Pin, GPIO_PIN_RESET)
+      |                                 ^~~~~
+../Core/Src/main.c:311:9: note: in expansion of macro 'SDA_L'
+  311 |         SDA_L;
+      |         ^~~~~
+../Core/Src/main.c: In function 'IIC_Start':
+../Core/Src/main.c:52:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   52 | #define SDA_H HAL_GPIO_WritePin(GPIOC, SDA_Pin, GPIO_PIN_SET)
+      |                                 ^~~~~
+../Core/Src/main.c:320:9: note: in expansion of macro 'SDA_H'
+  320 |         SDA_H;
+      |         ^~~~~
+../Core/Src/main.c: In function 'IIC_Stop':
+../Core/Src/main.c:50:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   50 | #define SCL_L HAL_GPIO_WritePin(GPIOC, SCL_Pin, GPIO_PIN_RESET)
+      |                                 ^~~~~
+../Core/Src/main.c:331:9: note: in expansion of macro 'SCL_L'
+  331 |         SCL_L;
+      |         ^~~~~
+../Core/Src/main.c: In function 'IIC_Wait_Ack':
+../Core/Src/main.c:52:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   52 | #define SDA_H HAL_GPIO_WritePin(GPIOC, SDA_Pin, GPIO_PIN_SET)
+      |                                 ^~~~~
+../Core/Src/main.c:343:9: note: in expansion of macro 'SDA_H'
+  343 |         SDA_H;HAL_usDelay(1);
+      |         ^~~~~
+../Core/Src/main.c: In function 'IIC_Ack':
+../Core/Src/main.c:50:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   50 | #define SCL_L HAL_GPIO_WritePin(GPIOC, SCL_Pin, GPIO_PIN_RESET)
+      |                                 ^~~~~
+../Core/Src/main.c:360:9: note: in expansion of macro 'SCL_L'
+  360 |         SCL_L;
+      |         ^~~~~
+../Core/Src/main.c: In function 'IIC_NAck':
+../Core/Src/main.c:50:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   50 | #define SCL_L HAL_GPIO_WritePin(GPIOC, SCL_Pin, GPIO_PIN_RESET)
+      |                                 ^~~~~
+../Core/Src/main.c:371:9: note: in expansion of macro 'SCL_L'
+  371 |         SCL_L;
+      |         ^~~~~
+../Core/Src/main.c: In function 'IIC_Send_Byte':
+../Core/Src/main.c:50:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   50 | #define SCL_L HAL_GPIO_WritePin(GPIOC, SCL_Pin, GPIO_PIN_RESET)
+      |                                 ^~~~~
+../Core/Src/main.c:384:5: note: in expansion of macro 'SCL_L'
+  384 |     SCL_L;
+      |     ^~~~~
+../Core/Src/main.c: In function 'IIC_Read_Byte':
+../Core/Src/main.c:50:33: error: 'GPIOC' undeclared (first use in this function); did you mean 'GPIOD'?
+   50 | #define SCL_L HAL_GPIO_WritePin(GPIOC, SCL_Pin, GPIO_PIN_RESET)
+      |                                 ^~~~~
+../Core/Src/main.c:406:9: note: in expansion of macro 'SCL_L'
+  406 |         SCL_L;
+      |         ^~~~~
+make: *** [Core/Src/subdir.mk:40: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.

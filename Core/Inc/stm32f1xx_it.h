@@ -32,16 +32,6 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-extern unsigned int Counter;
-extern unsigned char PWM_Flag;
-
-extern uint32_t capture_start1; // �?�获开始时的定时器值
-extern uint32_t capture_start2; // �?�获开始时的定时器值
-extern uint32_t capture_end1; // �?�获开始时的定时器值
-extern uint32_t capture_end2; // �?�获开始时的定时器值
-extern uint32_t capture_time1;
-extern uint32_t capture_time2;
-extern uint8_t Flag;
 
 /* USER CODE END ET */
 
@@ -65,8 +55,6 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-void EXTI2_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

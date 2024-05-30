@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -29,7 +28,6 @@
 #include "bmp.h"
 #include "oled_drive.h"
 #include "led.h"
-#include "stm32f1xx_it.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -145,7 +143,7 @@ void IIC_NAck(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  unsigned char high_time = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -167,11 +165,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-  MX_TIM1_Init();
-  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -191,74 +186,30 @@ int main(void)
 	OLED_ShowString(0,0,"Current ",16);
 	OLED_ShowString(0,2,"        XX.XXMA",12);
 
-	HAL_TIM_Base_Start(&htim2);
   printf("init success\r\n");
-//  test_in();
-
-
 
   while (1)
   {
-
-	  if(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0)
-	  {
-		  HAL_msDelay(50);
-		  while(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0);
-		  test_in();
-
-		  HAL_msDelay(3000);
-
-		  if(Flag == 3)
-		  {
-			  OnOffLedLight(6,1,0); //Calibrate red
-			  OnOffLedLight(6,2,1); //Calibrate green
-		  }
-		  else
-		  {
-			  Flag = 0;
-			  OnOffLedLight(6,2,0);
-		  }
-
-		  printf("capture_start1: %ld\r\ncapture_start2: %ld\r\n",capture_start1,capture_start2);
-		  printf("capture_end: %ld\r\n",capture_end1);
-//		  printf("capture_time1: %ld\r\ncapture_time2: %ld\r\n",capture_time1,capture_time2);
-		  printf("pwm_time: %d\r\n",Counter);
-
-//		  printf("capture_time2 %d\r\n",capture_time2);
-
-	  }
-
-//	  printf("capture_time1 %d\r\n",capture_time1);
-//	  printf("capture_time2 %d\r\n",capture_time2);
-
-
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  if(HAL_GPIO_ReadPin(GPIOC, ERROR_INPUT_Pin))
-//	  {
-//		  OnOffLedLight(4,2,1);
-//	  }
-//	  else if(HAL_GPIO_ReadPin(GPIOC, ERROR_INPUT_Pin) == 0)
-//	  {
-//		  OnOffLedLight(4,2,0);
-//	  }
-//
-//	  if(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0)
-//	  {
-//		  HAL_msDelay(20);
-//		  while(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0);
-//		  HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_RESET);
-//		  HAL_msDelay(100);
-//		  HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_SET);
-//	  }
-//	 if(PWM_Flag)
-//	 {
-//		 PWM_Flag = 0;
-//		 printf("Counter %d\r\n",Counter);
-//		 HAL_msDelay(1000);
-//	 }
+	  if(HAL_GPIO_ReadPin(GPIOC, ERROR_INPUT_Pin))
+	  {
+		  OnOffLedLight(4,2,1);
+	  }
+	  else if(HAL_GPIO_ReadPin(GPIOC, ERROR_INPUT_Pin) == 0)
+	  {
+		  OnOffLedLight(4,2,0);
+	  }
+
+	  if(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0)
+	  {
+		  HAL_msDelay(100);
+		  while(HAL_GPIO_ReadPin(GPIOB, Calibrate_KEY_Pin) == 0);
+		  HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_RESET);
+		  HAL_msDelay(100);
+		  HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_SET);
+	  }
   }
   /* USER CODE END 3 */
 }
@@ -324,7 +275,6 @@ void HAL_usDelay(uint32_t udelay)
   }
 }
 
-
 void HAL_msDelay(uint32_t udelay)
 {
 	uint16_t i = 0;
@@ -334,19 +284,6 @@ void HAL_msDelay(uint32_t udelay)
 	}
 }
 
-
-void test_in()
-{
-	HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_RESET);
-	HAL_msDelay(375);
-	HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_SET);
-	HAL_msDelay(200);
-	HAL_GPIO_WritePin(GPIOA, TEST_IN_Pin, GPIO_PIN_RESET);
-
-	HAL_GPIO_TogglePin(CALIBRATION_RED_GPIO_Port, CALIBRATION_RED_Pin);
-//	OnOffLedLight(6,1,1);
-
-}
 
 
 void my_SDA_IN(void)
